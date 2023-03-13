@@ -1,6 +1,23 @@
 [package]
 name = "tub"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 license = "MIT"
-description = "under development"
+description = "asynchronous resource pool"
+categories = ["asynchronous", "concurrency", "Data structures"]
+keywords = ["async", "concurrent", "data-structures", "pool", "resource-pool"]
+repository = "https://github.com/wcygan/tub"
+homepage = "https://github.com/wcygan/tub"
+exclude = ["/.github"]
+
+[[test]]
+name = "test"
+path = "test/test.rs"
+
+[dependencies]
+crossbeam-queue = "0.3.8"
+tokio = { version = "1.26.0", features = ["sync"] }
+
+[dev-dependencies]
+tokio = { version = "1.26.0", features = ["full"] }
+proptest = "1.1.0"
