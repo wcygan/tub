@@ -15,7 +15,7 @@
 //!    assert_eq!(pool.remaining_capacity(), 10);
 //!
 //!    // Get a value from the pool
-//!    let mut box1 = pool.get().await;
+//!    let mut box1 = pool.acquire().await;
 //!    assert_eq!(pool.remaining_capacity(), 9);
 //!
 //!    // Use the value
@@ -57,6 +57,8 @@ struct PoolInner<T> {
 }
 
 /// A handle to a value from the pool
+///
+/// When the [`Guard`] is dropped, the value is returned to the pool
 pub struct Guard<T> {
     /// A value from the pool
     /// Option is used to play nicely with borrowing rules
@@ -150,7 +152,7 @@ impl<T> Pool<T> {
         let queue = ArrayQueue::new(capacity);
 
         for _ in 0..capacity {
-            // Safety: The queue is created with capacity capacity
+            // Safety: The queue can hold every item we push
             let _ = queue.push(init());
         }
 
@@ -196,7 +198,10 @@ impl<T> Pool<T> {
         self.inner.queue.len()
     }
 
-    /// Get a value from the pool
+    #[inline]
+    /// Acquire a value from the pool.
+    ///
+    /// The value is protected by a [`Guard`]
     ///
     /// # Examples
     /// ```
@@ -205,13 +210,12 @@ impl<T> Pool<T> {
     /// #[tokio::main]
     /// async fn main() {
     ///    let pool: Pool<u32> = Pool::from_default(10);
-    ///    let mut box1 = pool.get().await;
+    ///    let mut box1 = pool.acquire().await;
     ///    assert_eq!(pool.remaining_capacity(), 9);
     ///    assert_eq!(*box1, u32::default());
     /// }
     /// ```
-    #[inline]
-    pub async fn get(&self) -> Guard<T> {
+    pub async fn acquire(&self) -> Guard<T> {
         let inner = self.inner.clone();
         loop {
             if let Some(value) = inner.queue.pop() {
@@ -230,7 +234,7 @@ impl<T> Drop for Guard<T> {
     #[inline]
     fn drop(&mut self) {
         if let Some(value) = self.value.take() {
-            // Safety: The queue will never be full when the Guard is alive
+            // Safety: The queue will never be full when a Guard is alive
             let _ = self.inner.queue.push(value);
             self.inner.notify.notify_one();
         }
@@ -241,14 +245,14 @@ impl<T> Deref for Guard<T> {
     type Target = T;
 
     fn deref(&self) -> &Self::Target {
-        // Safety: The value is always Some when the Guard is alive
+        // Safety: The value is always Some
         self.value.as_ref().unwrap()
     }
 }
 
 impl<T> DerefMut for Guard<T> {
     fn deref_mut(&mut self) -> &mut Self::Target {
-        // Safety: The value is always Some when the Guard is alive
+        // Safety: The value is always Some
         self.value.as_mut().unwrap()
     }
 }

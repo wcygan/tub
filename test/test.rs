@@ -51,7 +51,7 @@ fn test_clone_a_pool() {
 #[tokio::test]
 async fn guarded_value_is_mutable() {
     let pool = Pool::from_copy(10, 1);
-    let mut box1 = pool.get().await;
+    let mut box1 = pool.acquire().await;
     assert_eq!(pool.remaining_capacity(), 9);
     assert_eq!(*box1, 1);
     *box1 = 2;
@@ -61,14 +61,14 @@ async fn guarded_value_is_mutable() {
 #[tokio::test]
 async fn mutated_value_is_returned_to_pool() {
     let pool = Pool::from_copy(1, 1);
-    let mut b = pool.get().await;
+    let mut b = pool.acquire().await;
     assert_eq!(pool.remaining_capacity(), 0);
     assert_eq!(*b, 1);
     *b = 2;
     assert_eq!(*b, 2);
     drop(b);
     assert_eq!(pool.remaining_capacity(), 1);
-    let b = pool.get().await;
+    let b = pool.acquire().await;
     assert_eq!(pool.remaining_capacity(), 0);
     assert_eq!(*b, 2);
 }
@@ -97,7 +97,7 @@ proptest! {
                 let pool = Pool::from_copy(u, 1);
                 let mut guards = Vec::new();
                 for _ in 0..u {
-                    guards.push(pool.get().await);
+                    guards.push(pool.acquire().await);
                 }
                 assert_eq!(pool.remaining_capacity(), 0);
                 for guard in guards {

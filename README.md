@@ -10,7 +10,7 @@ To use Tub, add this to your Cargo.toml:
 
 ```toml
 [dependencies]
-tub = "0.2.0"
+tub = "0.2.2"
 ```
 
 Then create and use a pool like so:
@@ -24,7 +24,7 @@ async fn main() {
    let pool = Pool::from_initializer(10, || Box { value: 123 });
 
    // Get a value from the pool
-   let mut box1 = pool.get().await;
+   let mut box1 = pool.acquire().await;
 
    // Use the value
    box1.foo();
