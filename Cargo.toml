@@ -12,7 +12,7 @@ exclude = ["/.github"]
 
 [[test]]
 name = "test"
-path = "test/test.rs"
+path = "test/tests.rs"
 
 [dependencies]
 crossbeam-queue = "0.3.8"
