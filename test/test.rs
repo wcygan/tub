@@ -40,6 +40,14 @@ fn test_new_from_iter() {
     assert_eq!(pool.remaining_capacity(), 10);
 }
 
+#[test]
+fn test_clone_a_pool() {
+    let pool = Pool::from_copy(10, 1);
+    let pool2 = pool.clone();
+    assert_eq!(pool.remaining_capacity(), 10);
+    assert_eq!(pool2.remaining_capacity(), 10);
+}
+
 #[tokio::test]
 async fn guarded_value_is_mutable() {
     let pool = Pool::from_copy(10, 1);

@@ -44,6 +44,7 @@ use std::sync::Arc;
 use tokio::sync::Notify;
 
 /// A shared resource pool
+#[derive(Clone)]
 pub struct Pool<T> {
     inner: Arc<PoolInner<T>>,
 }
