@@ -1,8 +1,8 @@
 extern crate tub;
 
-use tub::Pool;
 use proptest::prelude::*;
 use tokio::runtime::Runtime;
+use tub::Pool;
 
 #[test]
 fn test_new_from_vec() {
