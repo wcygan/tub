@@ -59,8 +59,8 @@ jobs:
             target
             /home/runner/.cargo
           key: stable-target
-      - name: cargo test --test tests --locked -- --ignored
-        run: cargo test --locked --test tests -- --ignored
+      - name: cargo test --test test --locked -- --ignored
+        run: cargo test --locked --test test -- --ignored
   minimal:
     runs-on: ubuntu-latest
     name: ubuntu / stable / minimal-versions
@@ -128,8 +128,8 @@ jobs:
         run: cargo llvm-cov clean --workspace
       - name: cargo llvm-cov
         run: cargo llvm-cov --locked --all-features --no-report --release
-      - name: cargo llvm-cov tests
-        run: cargo llvm-cov --locked --all-features --no-report --release --test tests -- --ignored
+      - name: cargo llvm-cov test
+        run: cargo llvm-cov --locked --all-features --no-report --release --test test -- --ignored
       - name: Save cached target/
         id: target-cache-save
         uses: actions/cache/save@v3
