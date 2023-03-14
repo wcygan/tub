@@ -1,14 +1,20 @@
 [package]
 name = "tub"
-version = "0.2.2"
-edition = "2021"
-license = "MIT"
-description = "asynchronous resource pool"
+version = "0.3.0"
+description = "Async Pool"
+authors = ["Will Cygan <wcygan.io@gmail.com>"]
 categories = ["asynchronous", "concurrency", "data-structures"]
-keywords = ["async", "concurrent", "data-structures", "pool", "resource-pool"]
+keywords = ["asynchronous", "pool", "object-pool ", "resource-pool", "async"]
 repository = "https://github.com/wcygan/tub"
 homepage = "https://github.com/wcygan/tub"
-exclude = ["/.github"]
+exclude = ["/.github", "/benches"]
+edition = "2021"
+license = "MIT"
+
+[[bench]]
+name = "tub-bench"
+path = "benches/lib.rs"
+harness = false
 
 [[test]]
 name = "test"
@@ -21,3 +27,8 @@ tokio = { version = "1.26.0", features = ["sync"] }
 [dev-dependencies]
 tokio = { version = "1.26.0", features = ["full"] }
 proptest = "1.1.0"
+futures = "0.3.27"
+criterion = { version = "0.4.0", features = ["async_tokio", "async_std"] }
+async-object-pool = "0.1.4"
+simple-pool = "0.0.11"
+async-resource = "0.1.0"
