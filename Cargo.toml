@@ -28,7 +28,12 @@ tokio = { version = "1.26.0", features = ["sync"] }
 tokio = { version = "1.26.0", features = ["full"] }
 proptest = "1.1.0"
 futures = "0.3.27"
-criterion = { version = "0.4.0", features = ["async_tokio", "async_std"] }
+criterion = "0.4.0"
 async-object-pool = "0.1.4"
 simple-pool = "0.0.11"
 async-resource = "0.1.0"
+
+# These versions are pinned to fix `cargo +nightly update -Zminimal-versions && cargo test --locked --all-features`
+# Which breaks because of transitive dependencies on regex & serde from Criterion
+regex = "1.7.1"
+serde = "1.0.156"
