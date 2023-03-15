@@ -12,7 +12,9 @@ Values are retrieved from the pool asynchronously. When the retrieved value goes
 
 ## Documentation
 
-If you want to learn about how this crate was designed, see the ["Pools"](https://www.wcygan.io/post/pools/) blog post
+Read about the public API: [docs.rs/tub](https://docs.rs/tub)
+
+Read about the design: [wcygan.io/post/pools](https://www.wcygan.io/post/pools/)
 
 ## Usage
 
