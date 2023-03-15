@@ -1,6 +1,6 @@
 [package]
 name = "tub"
-version = "0.3.2"
+version = "0.3.3"
 description = "Async Pool"
 authors = ["Will Cygan <wcygan.io@gmail.com>"]
 categories = ["asynchronous", "concurrency", "data-structures"]
