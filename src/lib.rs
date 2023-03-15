@@ -1,8 +1,8 @@
 //! An asynchronous pool for managing reusable values.
 //!
-//! All values in the pool are initialized when the pool is created. Values can be retrieved from the pool asynchronously.
-//! When the retrieved out value goes out of scope, the value is returned to the pool and made available for retrieval at a
-//! later time.
+//! Values are retrieved from the pool asynchronously.
+//! When the retrieved out value goes out of scope,
+//! the value is returned to the pool.
 //!
 //! # Examples
 //! ```
@@ -198,7 +198,6 @@ impl<T> Pool<T> {
         self.inner.queue.len()
     }
 
-    #[inline]
     /// Acquire a value from the pool.
     ///
     /// The value is protected by a [`Guard`]
@@ -215,6 +214,7 @@ impl<T> Pool<T> {
     ///    assert_eq!(*box1, u32::default());
     /// }
     /// ```
+    #[inline]
     pub async fn acquire(&self) -> Guard<T> {
         let inner = self.inner.clone();
         loop {

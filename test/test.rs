@@ -1,7 +1,9 @@
 extern crate tub;
 
 use proptest::prelude::*;
+use std::sync::Arc;
 use tokio::runtime::Runtime;
+use tokio::sync::Barrier;
 use tub::Pool;
 
 #[test]
@@ -71,6 +73,92 @@ async fn mutated_value_is_returned_to_pool() {
     let b = pool.acquire().await;
     assert_eq!(pool.remaining_capacity(), 0);
     assert_eq!(*b, 2);
+}
+
+#[tokio::test]
+async fn deadlock_check_1() {
+    let pool = Pool::from_copy(1, 1);
+
+    let futures = (0..100)
+        .map(|_| {
+            let pool = pool.clone();
+            tokio::spawn(async move {
+                let mut b = pool.acquire().await;
+                *b = 2;
+                drop(b);
+            })
+        })
+        .collect::<Vec<_>>();
+
+    for future in futures {
+        future.await.unwrap();
+    }
+}
+
+#[tokio::test]
+async fn deadlock_check_2() {
+    let pool = Arc::new(Pool::from_copy(1, 1));
+    let barrier = Arc::new(Barrier::new(2));
+
+    let f1 = tokio::spawn({
+        let pool = pool.clone();
+        let barrier = barrier.clone();
+        async move {
+            let mut b = pool.acquire().await;
+            *b = 2;
+            drop(b);
+            barrier.wait().await;
+        }
+    });
+
+    let f2 = tokio::spawn({
+        let pool = pool.clone();
+        let barrier = barrier.clone();
+        async move {
+            barrier.wait().await;
+            let mut b = pool.acquire().await;
+            *b = 3;
+        }
+    });
+
+    f1.await.unwrap();
+    f2.await.unwrap();
+
+    assert_eq!(pool.remaining_capacity(), 1);
+    let v = pool.acquire().await;
+    assert_eq!(*v, 3);
+}
+
+#[tokio::test]
+async fn deadlock_check_3() {
+    let pool = Arc::new(Pool::from_copy(2, 1));
+
+    let handles: Vec<_> = (0..3)
+        .map(|_| {
+            tokio::spawn({
+                let pool = pool.clone();
+                async move {
+                    let _resource = pool.acquire().await;
+                }
+            })
+        })
+        .collect();
+
+    let handles2: Vec<_> = (0..3)
+        .map(|_| {
+            tokio::spawn({
+                let pool = pool.clone();
+                async move {
+                    let _resource = pool.acquire().await;
+                }
+            })
+        })
+        .collect();
+
+    // wait for all tasks to complete
+    for handle in handles.into_iter().chain(handles2.into_iter()) {
+        handle.await.unwrap();
+    }
 }
 
 proptest! {
