@@ -1,7 +1,9 @@
 extern crate tub;
 
 use proptest::prelude::*;
+use std::hint::black_box;
 use std::sync::Arc;
+use std::time::Duration;
 use tokio::runtime::Runtime;
 use tokio::sync::Barrier;
 use tub::Pool;
@@ -77,14 +79,14 @@ async fn mutated_value_is_returned_to_pool() {
 
 #[tokio::test]
 async fn deadlock_check_1() {
-    let pool = Pool::from_copy(1, 1);
+    let pool = Pool::from_copy(1, 0);
 
     let futures = (0..100)
         .map(|_| {
             let pool = pool.clone();
             tokio::spawn(async move {
                 let mut b = pool.acquire().await;
-                *b = 2;
+                *b += 1;
                 drop(b);
             })
         })
@@ -93,6 +95,10 @@ async fn deadlock_check_1() {
     for future in futures {
         future.await.unwrap();
     }
+
+    assert_eq!(pool.remaining_capacity(), 1);
+    let v = pool.acquire().await;
+    assert_eq!(*v, 100);
 }
 
 #[tokio::test]
@@ -161,6 +167,48 @@ async fn deadlock_check_3() {
     }
 }
 
+#[tokio::test]
+async fn deadlock_check_4() {
+    let pool = Arc::new(Pool::from_copy(1, 1));
+    let tasks = (0..100)
+        .map(|_| {
+            tokio::spawn({
+                let pool = pool.clone();
+                async move {
+                    let resource = pool.acquire().await;
+                    // Sleep to increase the odds that other tasks are waiting for the pool.
+                    tokio::time::sleep(Duration::from_nanos(1)).await;
+                    black_box(resource);
+                }
+            })
+        })
+        .collect::<Vec<_>>();
+
+    for task in tasks {
+        task.await.unwrap();
+    }
+}
+
+#[tokio::test]
+async fn deadlock_check_5() {
+    let pool = Arc::new(Pool::from_copy(1, 1));
+    let tasks = (0..100_000)
+        .map(|_| {
+            tokio::spawn({
+                let pool = pool.clone();
+                async move {
+                    let resource = pool.acquire().await;
+                    black_box(resource);
+                }
+            })
+        })
+        .collect::<Vec<_>>();
+
+    for task in tasks {
+        task.await.unwrap();
+    }
+}
+
 proptest! {
     #[test]
     fn new_from_vec_prop_property(vec in any::<Vec<u8>>()) {
@@ -202,5 +250,27 @@ proptest! {
             let pool = Pool::from_copy(u as usize, 1);
             assert_eq!(pool.remaining_capacity(), u as usize);
         }
+    }
+
+    #[test]
+    fn progress_property(_ in 0..2 as usize) {
+        Runtime::new().unwrap().block_on(async {
+            let pool = Arc::new(Pool::from_copy(1, 1));
+            let tasks = (0..100)
+                .map(|_| {
+                    tokio::spawn({
+                        let pool = pool.clone();
+                        async move {
+                            let resource = pool.acquire().await;
+                            black_box(resource);
+                        }
+                    })
+                })
+                .collect::<Vec<_>>();
+
+            for task in tasks {
+                task.await.unwrap();
+            }
+        });
     }
 }
