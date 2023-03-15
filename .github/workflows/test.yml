@@ -33,7 +33,7 @@ jobs:
           key: ${{ matrix.toolchain }}-target
       # https://twitter.com/jonhoo/status/1571290371124260865
       - name: cargo test --locked
-        run: cargo test --locked --all-features --all-targets
+        run: cargo test --locked --all-features
       - name: Save cached target/
         id: target-cache-save
         uses: actions/cache/save@v3
@@ -77,7 +77,7 @@ jobs:
       - name: cargo update -Zminimal-versions
         run: cargo +nightly update -Zminimal-versions
       - name: cargo test
-        run: cargo test --locked --all-features --all-targets
+        run: cargo test --locked --all-features
   os-check:
     runs-on: ${{ matrix.os }}
     name: ${{ matrix.os }} / stable
@@ -99,7 +99,7 @@ jobs:
         if: hashFiles('Cargo.lock') == ''
         run: cargo generate-lockfile
       - name: cargo test
-        run: cargo test --locked --all-features --all-targets
+        run: cargo test --locked --all-features
   coverage:
     runs-on: ubuntu-latest
     name: ubuntu / stable / coverage
