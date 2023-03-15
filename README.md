@@ -10,13 +10,17 @@ A *blazingly fast* object pool for Rust.
 
 Values are retrieved from the pool asynchronously. When the retrieved value goes out of scope, the value is returned to the pool.
 
+## Documentation
+
+If you want to learn about how this crate was designed, see the ["Pools"](https://www.wcygan.io/post/pools/) blog post
+
 ## Usage
 
 To use Tub, add this to your Cargo.toml:
 
 ```toml
 [dependencies]
-tub = "0.3.3"
+tub = "0.3.4"
 ```
 
 Then create and use a pool like so:
@@ -50,3 +54,35 @@ impl Box {
   fn foo(&mut self) { }
 }
 ```
+
+## Benchmarks
+
+In the ["Pools"](https://www.wcygan.io/post/pools/#results) blog post I benchmarked Tub against other object pools in Rust.
+
+The benchmarks help us understand how efficient the underlying mechanisms for concurrency control, object storage, and object reuse are.
+
+The results are as follows:
+
+### Input-based comparison
+
+The following benchmarks compare the performance of different pools under different amounts of load:
+
+![all](resources/all.svg)
+
+![two](resources/two.svg)
+
+### 100,000 acquires & releases
+
+The following benchmarks compare the performance of running 100,000 acquire & release operations across tasks.
+
+### [Tub](https://crates.io/crates/tub)
+
+![tub](resources/tub-pdf.svg)
+
+### [Async Object Pool](https://crates.io/crates/async-object-pool)
+
+![async-object-pool](resources/async-object-pool-pdf.svg)
+
+### [Simple Pool](https://crates.io/crates/simple-pool)
+
+![simple-pool](resources/simple-pool-pdf.svg)
