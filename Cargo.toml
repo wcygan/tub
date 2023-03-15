@@ -24,6 +24,9 @@ path = "test/test.rs"
 crossbeam-queue = "0.3.8"
 tokio = { version = "1.26.0", features = ["sync"] }
 
+# https://github.com/wcygan/tub/security/dependabot/1
+crossbeam-utils = "0.8.15"
+
 [dev-dependencies]
 tokio = { version = "1.26.0", features = ["full"] }
 proptest = "1.1.0"
