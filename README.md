@@ -16,7 +16,7 @@ To use Tub, add this to your Cargo.toml:
 
 ```toml
 [dependencies]
-tub = "0.3.1"
+tub = "0.3.2"
 ```
 
 Then create and use a pool like so:
