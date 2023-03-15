@@ -28,7 +28,7 @@ tokio = { version = "1.26.0", features = ["sync"] }
 tokio = { version = "1.26.0", features = ["full"] }
 proptest = "1.1.0"
 futures = "0.3.27"
-criterion = "0.4.0"
+criterion = { version = "0.4.0", features = ["async_tokio"] }
 async-object-pool = "0.1.4"
 simple-pool = "0.0.11"
 async-resource = "0.1.0"

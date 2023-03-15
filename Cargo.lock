@@ -342,6 +342,7 @@ dependencies = [
  "ciborium",
  "clap",
  "criterion-plot",
+ "futures",
  "itertools",
  "lazy_static",
  "num-traits 0.2.15",
@@ -353,6 +354,7 @@ dependencies = [
  "serde_derive",
  "serde_json",
  "tinytemplate",
+ "tokio",
  "walkdir",
 ]
 
