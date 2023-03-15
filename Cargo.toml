@@ -1,13 +1,13 @@
 [package]
 name = "tub"
-version = "0.3.3"
+version = "0.3.4"
 description = "Async Pool"
 authors = ["Will Cygan <wcygan.io@gmail.com>"]
 categories = ["asynchronous", "concurrency", "data-structures"]
 keywords = ["asynchronous", "pool", "object-pool", "resource-pool", "async"]
 repository = "https://github.com/wcygan/tub"
 homepage = "https://github.com/wcygan/tub"
-exclude = ["/.github", "/benches"]
+exclude = ["/.github", "/benches", "/resources"]
 edition = "2021"
 license = "MIT"
 
