@@ -11,7 +11,9 @@
 //! #[tokio::main]
 //! async fn main() {
 //!    // Create a pool
-//!    let pool = Pool::from_initializer(10, || Box { value: 123 });
+//!    let pool: Pool<Box> = (0..10)
+//!        .map(|_| Box { value: 123 })
+//!        .into();
 //!    assert_eq!(pool.remaining_capacity(), 10);
 //!
 //!    // Get a value from the pool
