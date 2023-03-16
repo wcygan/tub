@@ -271,7 +271,7 @@ proptest! {
     }
 
     #[test]
-    fn guard_returns_value_property(u in 0..50 as usize) {
+    fn guard_returns_value_property(u in 0..50_usize) {
         Runtime::new().unwrap().block_on(async {
             if u > 0 {
                 let pool = Pool::from_copy(u, 1);
@@ -297,7 +297,7 @@ proptest! {
     }
 
     #[test]
-    fn progress_property(_ in 0..2 as usize) {
+    fn progress_property(_ in 0..2_usize) {
         Runtime::new().unwrap().block_on(async {
             let pool = Arc::new(Pool::from_copy(1, 1));
             let tasks = (0..100)
