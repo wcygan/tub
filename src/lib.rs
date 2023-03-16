@@ -41,8 +41,8 @@
 //! }
 //! ```
 use crossbeam_queue::ArrayQueue;
-use std::ops::{Deref, DerefMut};
 use std::iter::Iterator;
+use std::ops::{Deref, DerefMut};
 use std::sync::Arc;
 use tokio::sync::Notify;
 
@@ -261,9 +261,9 @@ impl<T> DerefMut for Guard<T> {
 }
 
 impl<T, I> From<I> for Pool<T>
-    where
-        T: Send + Sync + 'static,
-        I: IntoIterator<Item = T>,
+where
+    T: Send + Sync + 'static,
+    I: IntoIterator<Item = T>,
 {
     fn from(iter: I) -> Self {
         let vec: Vec<T> = iter.into_iter().collect();

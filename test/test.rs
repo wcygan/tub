@@ -11,9 +11,7 @@ use tub::Pool;
 #[tokio::test]
 async fn readme() {
     // Create a pool
-    let pool: Pool<Box> = (0..10)
-        .map(|_| Box { _value: 123 })
-        .into();
+    let pool: Pool<Box> = (0..10).map(|_| Box { _value: 123 }).into();
 
     // Get a value from the pool
     let mut box1 = pool.acquire().await;
@@ -28,11 +26,11 @@ async fn readme() {
     drop(box1);
 
     struct Box {
-        _value: u32
+        _value: u32,
     }
 
     impl Box {
-        fn foo(&mut self) { }
+        fn foo(&mut self) {}
     }
 }
 
@@ -80,17 +78,13 @@ fn test_from_trait_1() {
 
 #[test]
 fn test_from_trait_2() {
-    let pool: Pool<String> = (0..100)
-        .map(|_| String::from("hello"))
-        .into();
+    let pool: Pool<String> = (0..100).map(|_| String::from("hello")).into();
     assert_eq!(pool.remaining_capacity(), 100);
 }
 
 #[test]
 fn test_from_trait_3() {
-    let pool: Pool<Vec<u32>> = (0..10)
-        .map(|_| vec![])
-        .into();
+    let pool: Pool<Vec<u32>> = (0..10).map(|_| vec![]).into();
     assert_eq!(pool.remaining_capacity(), 10);
 }
 
