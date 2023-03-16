@@ -33,7 +33,9 @@ use tub::Pool;
 #[tokio::main]
 async fn main() {
    // Create a pool
-   let pool = Pool::from_initializer(10, || Box { value: 123 });
+   let pool: Pool<Box> = (0..10)
+       .map(|_| Box { value: 123 })
+       .into();
 
    // Get a value from the pool
    let mut box1 = pool.acquire().await;

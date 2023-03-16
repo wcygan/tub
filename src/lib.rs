@@ -11,7 +11,9 @@
 //! #[tokio::main]
 //! async fn main() {
 //!    // Create a pool
-//!    let pool = Pool::from_initializer(10, || Box { value: 123 });
+//!    let pool: Pool<Box> = (0..10)
+//!        .map(|_| Box { value: 123 })
+//!        .into();
 //!    assert_eq!(pool.remaining_capacity(), 10);
 //!
 //!    // Get a value from the pool
@@ -39,6 +41,7 @@
 //! }
 //! ```
 use crossbeam_queue::ArrayQueue;
+use std::iter::Iterator;
 use std::ops::{Deref, DerefMut};
 use std::sync::Arc;
 use tokio::sync::Notify;
@@ -254,5 +257,16 @@ impl<T> DerefMut for Guard<T> {
     fn deref_mut(&mut self) -> &mut Self::Target {
         // Safety: The value is always Some
         self.value.as_mut().unwrap()
+    }
+}
+
+impl<T, I> From<I> for Pool<T>
+where
+    T: Send + Sync + 'static,
+    I: IntoIterator<Item = T>,
+{
+    fn from(iter: I) -> Self {
+        let vec: Vec<T> = iter.into_iter().collect();
+        Self::from_vec(vec)
     }
 }
