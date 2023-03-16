@@ -8,6 +8,34 @@ use tokio::runtime::Runtime;
 use tokio::sync::Barrier;
 use tub::Pool;
 
+#[tokio::test]
+async fn readme() {
+    // Create a pool
+    let pool: Pool<Box> = (0..10)
+        .map(|_| Box { _value: 123 })
+        .into();
+
+    // Get a value from the pool
+    let mut box1 = pool.acquire().await;
+
+    // Use the value
+    box1.foo();
+
+    // Modify the value
+    *box1 = Box { _value: 456 };
+
+    // Return the value to the pool
+    drop(box1);
+
+    struct Box {
+        _value: u32
+    }
+
+    impl Box {
+        fn foo(&mut self) { }
+    }
+}
+
 #[test]
 fn test_new_from_vec() {
     let pool = Pool::from_vec(vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
@@ -41,6 +69,28 @@ fn test_new_from_default() {
 #[test]
 fn test_new_from_iter() {
     let pool = Pool::from_iter(0..10);
+    assert_eq!(pool.remaining_capacity(), 10);
+}
+
+#[test]
+fn test_from_trait_1() {
+    let pool: Pool<u32> = (0..100).into();
+    assert_eq!(pool.remaining_capacity(), 100);
+}
+
+#[test]
+fn test_from_trait_2() {
+    let pool: Pool<String> = (0..100)
+        .map(|_| String::from("hello"))
+        .into();
+    assert_eq!(pool.remaining_capacity(), 100);
+}
+
+#[test]
+fn test_from_trait_3() {
+    let pool: Pool<Vec<u32>> = (0..10)
+        .map(|_| vec![])
+        .into();
     assert_eq!(pool.remaining_capacity(), 10);
 }
 

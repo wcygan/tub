@@ -40,6 +40,7 @@
 //! ```
 use crossbeam_queue::ArrayQueue;
 use std::ops::{Deref, DerefMut};
+use std::iter::Iterator;
 use std::sync::Arc;
 use tokio::sync::Notify;
 
@@ -254,5 +255,16 @@ impl<T> DerefMut for Guard<T> {
     fn deref_mut(&mut self) -> &mut Self::Target {
         // Safety: The value is always Some
         self.value.as_mut().unwrap()
+    }
+}
+
+impl<T, I> From<I> for Pool<T>
+    where
+        T: Send + Sync + 'static,
+        I: IntoIterator<Item = T>,
+{
+    fn from(iter: I) -> Self {
+        let vec: Vec<T> = iter.into_iter().collect();
+        Self::from_vec(vec)
     }
 }
