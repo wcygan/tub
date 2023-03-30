@@ -4,6 +4,7 @@
 [<img alt="crates.io" src="https://img.shields.io/crates/v/tub.svg?style=for-the-badge&color=fc8d62&logo=rust" height="20">](https://crates.io/crates/tub)
 [<img alt="docs.rs" src="https://img.shields.io/badge/docs.rs-tub-66c2a5?style=for-the-badge&labelColor=555555&logo=docs.rs" height="20">](https://docs.rs/tub)
 [<img alt="build status" src="https://img.shields.io/github/actions/workflow/status/wcygan/tub/test.yml?branch=master&style=for-the-badge" height="20">](https://github.com/wcygan/tub/actions?query=branch%3Amaster)
+[![codecov](https://codecov.io/gh/wcygan/tub/branch/master/graph/badge.svg?token=5OGDYMYGXM)](https://codecov.io/gh/wcygan/tub)
 
 
 A *blazingly fast* object pool for Rust.
@@ -22,7 +23,7 @@ To use Tub, add this to your Cargo.toml:
 
 ```toml
 [dependencies]
-tub = "0.3.5"
+tub = "0.3.6"
 ```
 
 Then create and use a pool like so:
