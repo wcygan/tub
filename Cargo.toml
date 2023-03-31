@@ -1,6 +1,9 @@
 [package]
 name = "tub"
-version = "0.3.6"
+# When publishing a new version:
+# - Update README.md
+# - Build the crate to update the version in Cargo.lock
+version = "0.3.7"
 description = "Async Pool"
 authors = ["Will Cygan <wcygan.io@gmail.com>"]
 categories = ["asynchronous", "concurrency", "data-structures"]
